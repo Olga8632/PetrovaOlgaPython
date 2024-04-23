@@ -1,0 +1,58 @@
+import math
+import sys
+
+def read_circle_data(file_name):
+    try:
+        with open(file_name, 'r') as file:
+            data = file.readlines()
+            x, y = map(float, data[0].split())
+            radius = float(data[1])
+            return x, y, radius
+    except FileNotFoundError:
+        print("Файл с координатами и радиусом окружности не найден.")
+        sys.exit(1)
+    except ValueError:
+        print("Неверный формат данных в файле с координатами и радиусом окружности.")
+        sys.exit(1)
+
+def read_points(file_name):
+    try:
+        with open(file_name, 'r') as file:
+            points = []
+            for line in file:
+                x, y = map(float, line.split())
+                points.append((x, y))
+            return points
+    except FileNotFoundError:
+        print("Файл с координатами точек не найден.")
+        sys.exit(1)
+    except ValueError:
+        print("Неверный формат данных в файле с координатами точек.")
+        sys.exit(1)
+
+def point_position(x_center, y_center, radius, x_point, y_point):
+    distance_squared = (x_point - x_center) ** 2 + (y_point - y_center) ** 2
+    if math.isclose(distance_squared, radius ** 2):
+        return 0  # Точка лежит на окружности
+    elif distance_squared < radius ** 2:
+        return 1  # Точка внутри окружности
+    else:
+        return 2  # Точка снаружи окружности
+
+def main():
+    if len(sys.argv) != 3:
+        print("Использование: python program.py <file_circle_data> <file_points>")
+        sys.exit(1)
+
+    circle_data_file = sys.argv[1]
+    points_file = sys.argv[2]
+
+    x_center, y_center, radius = read_circle_data(circle_data_file)
+    points = read_points(points_file)
+
+    for point in points:
+        result = point_position(x_center, y_center, radius, point[0], point[1])
+        print(result)
+
+if __name__ == "__main__":
+    main()
